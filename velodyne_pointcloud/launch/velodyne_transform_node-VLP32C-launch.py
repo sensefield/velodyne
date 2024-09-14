@@ -42,6 +42,15 @@ import yaml
 
 
 def generate_launch_description():
+    remap_velodyne_packets = launch.actions.DeclareLaunchArgument(
+        'remap_velodyne_packets', default_value='velodyne_packets')
+    remap_velodyne_points = launch.actions.DeclareLaunchArgument(
+        'remap_velodyne_points', default_value='~/pointcloud_raw')
+
+    remap_velodyne_packets_value = launch.substitutions.LaunchConfiguration('remap_velodyne_packets')
+    remap_velodyne_points_value = launch.substitutions.LaunchConfiguration('remap_velodyne_points')
+
+
     share_dir = ament_index_python.packages.get_package_share_directory('velodyne_pointcloud')
     params_file = os.path.join(share_dir, 'config', 'VLP32C-velodyne_transform_node-params.yaml')
     with open(params_file, 'r') as f:
@@ -50,9 +59,15 @@ def generate_launch_description():
     velodyne_transform_node = launch_ros.actions.Node(package='velodyne_pointcloud',
                                                       executable='velodyne_transform_node',
                                                       output='both',
-                                                      parameters=[params])
+                                                      parameters=[params],
+                                                      remappings=[
+                                                        ('~/velodyne_packets', remap_velodyne_packets_value),
+                                                        ('~/velodyne_points', remap_velodyne_points_value)
+                                                      ])
 
-    return launch.LaunchDescription([velodyne_transform_node,
+    return launch.LaunchDescription([remap_velodyne_packets,
+                                     remap_velodyne_points,
+                                     velodyne_transform_node,
 
                                      launch.actions.RegisterEventHandler(
                                          event_handler=launch.event_handlers.OnProcessExit(

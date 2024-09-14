@@ -40,6 +40,9 @@ import launch_ros.actions
 
 
 def generate_launch_description():
+    remap_velodyne_packets = launch.actions.DeclareLaunchArgument(
+        'remap_velodyne_packets', default_value='velodyne_packets')
+    remap_velodyne_packets_value = launch.substitutions.LaunchConfiguration('remap_velodyne_packets')
     config_directory = os.path.join(
         ament_index_python.packages.get_package_share_directory('velodyne_driver'),
         'config')
@@ -47,10 +50,13 @@ def generate_launch_description():
     velodyne_driver_node = launch_ros.actions.Node(package='velodyne_driver',
                                                    executable='velodyne_driver_node',
                                                    output='both',
-                                                   parameters=[params])
+                                                   parameters=[params],
+                                                   remappings=[
+                                                        ('velodyne_packets', remap_velodyne_packets_value)
+                                                    ])
 
-    return launch.LaunchDescription([velodyne_driver_node,
-
+    return launch.LaunchDescription([remap_velodyne_packets,
+                                     velodyne_driver_node,
                                      launch.actions.RegisterEventHandler(
                                          event_handler=launch.event_handlers.OnProcessExit(
                                              target_action=velodyne_driver_node,
