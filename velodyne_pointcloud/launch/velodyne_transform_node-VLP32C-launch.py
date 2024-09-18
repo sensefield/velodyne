@@ -45,7 +45,7 @@ def generate_launch_description():
     remap_velodyne_packets = launch.actions.DeclareLaunchArgument(
         'remap_velodyne_packets', default_value='velodyne_packets')
     remap_velodyne_points = launch.actions.DeclareLaunchArgument(
-        'remap_velodyne_points', default_value='~/pointcloud_raw')
+        'remap_velodyne_points', default_value='pointcloud_raw_ex')
 
     remap_velodyne_packets_value = launch.substitutions.LaunchConfiguration('remap_velodyne_packets')
     remap_velodyne_points_value = launch.substitutions.LaunchConfiguration('remap_velodyne_points')
@@ -62,7 +62,7 @@ def generate_launch_description():
                                                       parameters=[params],
                                                       remappings=[
                                                         ('~/velodyne_packets', remap_velodyne_packets_value),
-                                                        ('~/velodyne_points', remap_velodyne_points_value)
+                                                        ('velodyne_points', remap_velodyne_points_value)
                                                       ])
 
     return launch.LaunchDescription([remap_velodyne_packets,
