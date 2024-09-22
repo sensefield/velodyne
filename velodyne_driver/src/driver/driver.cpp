@@ -177,7 +177,7 @@ VelodyneDriver::VelodyneDriver(const rclcpp::NodeOptions & options)
 
   // raw packet output topic
   output_ =
-    this->create_publisher<velodyne_msgs::msg::VelodyneScan>("velodyne_packets", 10);
+    this->create_publisher<velodyne_msgs::msg::VelodyneScan>("velodyne_packets", rclcpp::SensorDataQoS());
 
   last_azimuth_ = -1;
 
